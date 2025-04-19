@@ -1,0 +1,41 @@
+name: "OPA Policy Validation"
+
+on:
+  push:
+    paths:
+      - 'policies/**'
+      - 'tests/**'
+  pull_request:
+    paths:
+      - 'policies/**'
+      - 'tests/**'
+  workflow_dispatch:
+
+jobs:
+  opa-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install OPA
+        run: |
+          curl -L -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64
+          chmod +x opa && sudo mv opa /usr/local/bin/opa
+
+      - name: Validate Rego Syntax
+        run: opa check policies/
+
+      - name: Run Policy Unit Tests
+        run: opa test policies/ tests/ --verbose
+
+      - name: Generate Policy Documentation
+        if: github.ref == 'refs/heads/main'
+        run: |
+          for f in policies/**/*.rego; do
+            echo "# $(basename ${f%.*})" >> docs/policies.md
+            echo '```rego' >> docs/policies.md
+            cat $f >> docs/policies.md
+            echo '```' >> docs/policies.md
+            echo "" >> docs/policies.md
+          done

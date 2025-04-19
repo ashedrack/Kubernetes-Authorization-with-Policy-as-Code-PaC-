@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: permit-credentials
+type: Opaque
+data:
+  PERMIT_API_KEY: ${PERMIT_API_KEY}  # Base64 encoded API key
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: permit-webhook
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: permit-webhook
+  template:
+    metadata:
+      labels:
+        app: permit-webhook
+    spec:
+      containers:
+      - name: permit-webhook
+        image: permitio/permit-webhook:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: PERMIT_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: permit-credentials
+              key: PERMIT_API_KEY
+        - name: PERMIT_PDP_MODE
+          value: "cloud"
+        - name: PERMIT_LOG_LEVEL
+          value: "INFO"
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+          requests:
+            cpu: "200m"
+            memory: "256Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: permit-webhook
+spec:
+  selector:
+    app: permit-webhook
+  ports:
+  - port: 8000
+    targetPort: 8000
+  type: ClusterIP

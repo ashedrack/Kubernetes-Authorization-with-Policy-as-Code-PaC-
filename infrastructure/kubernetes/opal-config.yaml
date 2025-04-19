@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opal-server-config
+data:
+  OPAL_POLICY_REPO_URL: "https://github.com/your-org/eks-terraform-githubactions"
+  OPAL_POLICY_REPO_BRANCH: "main"
+  OPAL_POLICY_REPO_POLLING_INTERVAL: "30s"
+  OPAL_LOG_FORMAT: "json"
+  OPAL_LOG_LEVEL: "INFO"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opal-server
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: opal-server
+  template:
+    metadata:
+      labels:
+        app: opal-server
+    spec:
+      containers:
+      - name: opal-server
+        image: permitio/opal-server:latest
+        ports:
+        - containerPort: 7002
+        envFrom:
+        - configMapRef:
+            name: opal-server-config
+        resources:
+          limits:
+            cpu: "1"
+            memory: "1Gi"
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opal-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opal-client
+  template:
+    metadata:
+      labels:
+        app: opal-client
+    spec:
+      containers:
+      - name: opal-client
+        image: permitio/opal-client:latest
+        env:
+        - name: OPAL_SERVER_URL
+          value: "http://opal-server:7002"
+        - name: OPAL_LOG_FORMAT
+          value: "json"
+        - name: OPAL_LOG_LEVEL
+          value: "INFO"
+        - name: OPAL_UPDATE_CALLBACKS
+          value: "http://localhost:8181"
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+          requests:
+            cpu: "200m"
+            memory: "256Mi"

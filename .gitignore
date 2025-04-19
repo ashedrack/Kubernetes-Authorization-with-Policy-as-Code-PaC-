@@ -1,0 +1,30 @@
+# Local .terraform directories
+**/.terraform/*
+
+# Terraform state files
+*.tfstate
+*.tfstate.*
+
+# Terraform variables
+*.tfvars
+
+# OPA binary
+opa
+
+# IDE files
+.vscode/
+.idea/
+
+# Environment variables
+.env
+.envrc
+
+# Generated documentation
+docs/policies.md
+
+# Logs
+*.log
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
