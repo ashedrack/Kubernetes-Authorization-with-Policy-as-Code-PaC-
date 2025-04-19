@@ -19,8 +19,6 @@ opa
 .env
 .envrc
 
-# Generated documentation
-docs/policies.md
 
 # Logs
 *.log
