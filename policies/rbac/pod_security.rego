@@ -1,7 +1,7 @@
 package kubernetes.admission
 
 # Deny privileged containers
-deny[msg] if {
+deny[msg] {
     input.request.kind.kind == "Pod"
     container := input.request.object.spec.containers[_]
     container.securityContext.privileged == true
@@ -9,7 +9,7 @@ deny[msg] if {
 }
 
 # Enforce resource limits
-deny[msg] if {
+deny[msg] {
     input.request.kind.kind == "Pod"
     container := input.request.object.spec.containers[_]
     not container.resources.limits
@@ -17,7 +17,7 @@ deny[msg] if {
 }
 
 # Block root user
-deny[msg] if {
+deny[msg] {
     input.request.kind.kind == "Pod"
     container := input.request.object.spec.containers[_]
     not container.securityContext.runAsNonRoot == true
@@ -25,7 +25,7 @@ deny[msg] if {
 }
 
 # Enforce read-only root filesystem
-deny[msg] if {
+deny[msg] {
     input.request.kind.kind == "Pod"
     container := input.request.object.spec.containers[_]
     not container.securityContext.readOnlyRootFilesystem == true
