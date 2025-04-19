@@ -1,7 +1,7 @@
 package kubernetes.admission
 
 # Ensure NetworkPolicy exists for each namespace
-deny[msg] {
+deny[msg] if {
     input.request.kind.kind == "Namespace"
     name := input.request.object.metadata.name
     not input.request.object.metadata.annotations["network-policy"]
@@ -9,7 +9,7 @@ deny[msg] {
 }
 
 # Deny ingress traffic from non-whitelisted namespaces
-deny[msg] {
+deny[msg] if {
     input.request.kind.kind == "NetworkPolicy"
     ingress := input.request.object.spec.ingress[_]
     from := ingress.from[_]
@@ -19,7 +19,7 @@ deny[msg] {
 }
 
 # List of allowed namespaces
-allowed_namespace(namespace) {
+allowed_namespace(namespace) if {
     allowed = ["default", "kube-system", "monitoring"]
     namespace == allowed[_]
 }
