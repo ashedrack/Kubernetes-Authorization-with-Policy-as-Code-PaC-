@@ -7,7 +7,6 @@
 
 ![EKS- GitHub Actions- Terraform](assets/Presentation1.gif)
 
-Welcome to the repository for **Enhancing Kubernetes Authorization with Policy-as-Code (PaC)**! 
 
 ## 🌟 Overview
 This project covers:
