@@ -7,6 +7,8 @@
 
 # Terraform variables
 *.tfvars
+!example.tfvars
+!dev.tfvars
 
 # OPA binary
 opa
