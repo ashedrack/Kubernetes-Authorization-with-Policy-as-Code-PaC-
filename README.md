@@ -89,24 +89,66 @@ The project implements a multi-layered authorization strategy:
 
 ```plaintext
 .
-├── policies/                    # OPA Rego policies
-│   ├── rbac/                   # Role-based policies
-│   │   ├── image_policy.rego
-│   │   ├── network_policy.rego
-│   │   └── pod_security.rego
-│   ├── rebac/                  # Relationship-based policies
-│   │   └── account_access.rego
-│   └── tests/                  # Policy unit tests
-├── infrastructure/             # Infrastructure code
-│   ├── terraform/             # Terraform modules
-│   │   └── opa.tf            # OPA deployment
-│   └── kubernetes/           # K8s manifests
-│       ├── opal-config.yaml
-│       └── permit-config.yaml
-├── examples/                   # Example applications
+├── .github/                    # GitHub Actions workflows
+│   └── workflows/
+│       ├── opa-validation.yml  # OPA policy validation
+│       └── terraform.yml       # Infrastructure deployment
+├── assets/                    # Project assets and images
+├── docs/                      # Documentation
+│   ├── policies.md            # Generated policy documentation
+│   └── medium-article.md      # Project article
+├── eks/                      # EKS-specific configurations
+├── examples/                  # Example applications
 │   └── permit-app/           # FastAPI + Permit.io demo
-└── docs/                      # Documentation
+├── infrastructure/           # Infrastructure code
+│   ├── kubernetes/           # Kubernetes manifests
+│   │   ├── opal-config.yaml  # OPAL configuration
+│   │   └── permit-config.yaml # Permit.io configuration
+│   └── terraform/            # Terraform modules
+│       ├── eks.tf            # EKS cluster configuration
+│       ├── iam.tf            # IAM roles and policies
+│       ├── main.tf           # Main Terraform configuration
+│       ├── opa.tf            # OPA/Gatekeeper deployment
+│       ├── outputs.tf        # Output definitions
+│       └── variables.tf       # Variable definitions
+├── module/                   # Reusable Terraform modules
+├── policies/                 # OPA Rego policies
+│   ├── abac/                # Attribute-based policies
+│   ├── rbac/                # Role-based policies
+│   │   ├── image_policy.rego # Container image validation
+│   │   ├── network_policy.rego # Network access control
+│   │   └── pod_security.rego  # Pod security constraints
+│   └── rebac/               # Relationship-based policies
+│       └── account_access.rego # Account access control
+└── tests/                   # Policy unit tests
+    └── account_access_test.rego # ReBAC policy tests
+
 ```
+
+### Key Components
+
+1. **GitHub Actions Workflows**
+   - `opa-validation.yml`: Validates OPA policies and generates documentation
+   - `terraform.yml`: Manages infrastructure deployment and updates
+
+2. **Infrastructure**
+   - Terraform configurations for EKS, IAM, and OPA
+   - Kubernetes manifests for policy engines and middleware
+
+3. **Policies**
+   - RBAC: Traditional role-based access control
+   - ABAC: Attribute-based policies for fine-grained control
+   - ReBAC: Relationship-based policies for complex access patterns
+
+4. **Testing**
+   - Unit tests for policy validation
+   - Integration tests for policy combinations
+   - Example applications for demonstration
+
+5. **Documentation**
+   - Auto-generated policy documentation
+   - Implementation guides and articles
+   - Architecture diagrams and workflows
 
 
 ### Prerequisites Setup Commands
