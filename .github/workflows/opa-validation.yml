@@ -32,6 +32,7 @@ jobs:
       - name: Generate Policy Documentation
         if: github.ref == 'refs/heads/main'
         run: |
+          mkdir -p docs
           for f in policies/**/*.rego; do
             echo "# $(basename ${f%.*})" >> docs/policies.md
             echo '```rego' >> docs/policies.md
