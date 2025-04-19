@@ -105,26 +105,25 @@ The project implements a multi-layered authorization strategy:
 
 ## Project Structure
 
-```
+```plaintext
 .
-├── policies/                 # OPA Rego policies
-│   ├── rbac/               # Role-based policies
+├── policies/                    # OPA Rego policies
+│   ├── rbac/                   # Role-based policies
 │   │   ├── image_policy.rego
 │   │   ├── network_policy.rego
 │   │   └── pod_security.rego
-│   ├── rebac/              # Relationship-based policies
+│   ├── rebac/                  # Relationship-based policies
 │   │   └── account_access.rego
-│   └── tests/              # Policy unit tests
-├── infrastructure/         # Infrastructure code
-│   ├── terraform/         # Terraform modules
-│   │   └── opa.tf        # OPA deployment
-│   └── kubernetes/       # K8s manifests
+│   └── tests/                  # Policy unit tests
+├── infrastructure/             # Infrastructure code
+│   ├── terraform/             # Terraform modules
+│   │   └── opa.tf            # OPA deployment
+│   └── kubernetes/           # K8s manifests
 │       ├── opal-config.yaml
 │       └── permit-config.yaml
-├── examples/              # Example applications
-│   └── permit-app/       # FastAPI + Permit.io demo
-└── docs/                 # Documentation
-
+├── examples/                   # Example applications
+│   └── permit-app/           # FastAPI + Permit.io demo
+└── docs/                      # Documentation
 ```
 
 ## Prerequisites
