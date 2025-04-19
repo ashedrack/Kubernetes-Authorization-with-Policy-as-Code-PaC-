@@ -389,13 +389,8 @@ The combination of infrastructure as code and CI/CD creates a powerful platform 
 ```
 
 ## Resources
-
-- [Original Article by Aman Pathak](https://medium.com/devops-dev/introduction-ab466a03c714)
 - [Terraform Documentation](https://www.terraform.io/docs)
 - [EKS Documentation](https://docs.aws.amazon.com/eks)
 - [GitHub Actions](https://docs.github.com/en/actions)
 - [AWS CLI Reference](https://awscli.amazonaws.com/v2/documentation/api/latest/index.html)
 
-## Acknowledgments
-
-Special thanks to Aman Pathak for the original implementation and detailed walkthrough of the EKS cluster setup. This guide builds upon his work by adding additional cost optimization strategies, security enhancements, and improved automation workflows.
