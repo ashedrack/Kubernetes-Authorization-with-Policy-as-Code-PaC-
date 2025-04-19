@@ -58,7 +58,170 @@ This project covers:
 - **Infrastructure as Code (IaC)**: Use Terraform to define and manage your EKS cluster.
 - **CI/CD Automation**: Leverage GitHub Actions to automate deployments.
 
-## 🌟 Comprehensive Guide
+# EKS Terraform with Policy-as-Code (PaC)
+
+This project demonstrates how to implement a production-ready EKS cluster with advanced authorization using Policy-as-Code (PaC). It combines infrastructure automation via Terraform with modern authorization patterns using OPA, OPAL, and Permit.io.
+
+## Architecture Overview
+
+The project implements a multi-layered authorization strategy:
+
+1. **Infrastructure Layer**: OPA policies for EKS configuration validation
+2. **Platform Layer**: Real-time policy updates via OPAL
+3. **Application Layer**: Fine-grained access control with Permit.io
+
+This project demonstrates how to implement a production-ready EKS cluster with advanced authorization using Policy-as-Code (PaC). It combines infrastructure automation via Terraform with modern authorization patterns using OPA, OPAL, and Permit.io.
+
+## Architecture Overview
+
+The project implements a multi-layered authorization strategy:
+
+1. **Infrastructure Layer**: OPA policies for EKS configuration validation
+2. **Platform Layer**: Real-time policy updates via OPAL
+3. **Application Layer**: Fine-grained access control with Permit.io
+
+## Features
+
+### Infrastructure Security
+- Pod security policies (privileged containers, resource limits)
+- Network policies for namespace isolation
+- Image registry validation
+- Resource quota enforcement
+
+### Authorization Patterns
+- Role-Based Access Control (RBAC)
+- Attribute-Based Access Control (ABAC)
+- Relationship-Based Access Control (ReBAC)
+
+### Real-Time Policy Updates
+- Git-based policy management
+- OPAL integration for dynamic updates
+- Redis caching for performance
+
+### Developer Experience
+- FastAPI example application
+- Permit.io SDK integration
+- Comprehensive policy testing
+
+## Project Structure
+
+```
+.
+├── policies/                 # OPA Rego policies
+│   ├── rbac/               # Role-based policies
+│   │   ├── image_policy.rego
+│   │   ├── network_policy.rego
+│   │   └── pod_security.rego
+│   ├── rebac/              # Relationship-based policies
+│   │   └── account_access.rego
+│   └── tests/              # Policy unit tests
+├── infrastructure/         # Infrastructure code
+│   ├── terraform/         # Terraform modules
+│   │   └── opa.tf        # OPA deployment
+│   └── kubernetes/       # K8s manifests
+│       ├── opal-config.yaml
+│       └── permit-config.yaml
+├── examples/              # Example applications
+│   └── permit-app/       # FastAPI + Permit.io demo
+└── docs/                 # Documentation
+
+```
+
+## Prerequisites
+
+- AWS CLI configured with appropriate credentials
+- Terraform >= 1.0.0
+- kubectl >= 1.20
+- OPA CLI
+- Python >= 3.11 (for example app)
+
+## Quick Start
+
+1. **Clone the repository**
+```bash
+git clone https://github.com/your-org/eks-terraform-pac
+cd eks-terraform-pac
+```
+
+2. **Deploy Infrastructure**
+```bash
+cd infrastructure/terraform
+terraform init
+terraform apply
+```
+
+3. **Deploy OPA and OPAL**
+```bash
+kubectl apply -f ../kubernetes/opal-config.yaml
+```
+
+4. **Configure Permit.io**
+- Create an account at [Permit.io](https://permit.io)
+- Get your API key
+- Update the secret in `infrastructure/kubernetes/permit-config.yaml`
+```bash
+kubectl apply -f ../kubernetes/permit-config.yaml
+```
+
+5. **Run Example App**
+```bash
+cd examples/permit-app
+python -m venv venv
+source venv/bin/activate  # or `venv\Scripts\activate` on Windows
+pip install -r requirements.txt
+uvicorn app:app --reload
+```
+
+## Policy Testing
+
+```bash
+# Test all policies
+opa test policies/ --verbose
+
+# Test specific policy
+opa test policies/rebac/account_access.rego policies/tests/account_access_test.rego
+```
+
+## Policy Examples
+
+### Pod Security Policy
+```rego
+# Deny privileged containers
+deny[msg] {
+    input.request.kind.kind == "Pod"
+    container := input.request.object.spec.containers[_]
+    container.securityContext.privileged == true
+    msg := sprintf("Container '%s' must not run as privileged", [container.name])
+}
+```
+
+### ReBAC Policy
+```rego
+# Allow parent accounts to access child accounts
+allow {
+    input.subject.relation == "parent"
+    input.resource.type == "account"
+    input.resource.child_id == input.subject.child_id
+}
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Write tests for your changes
+4. Ensure all tests pass
+5. Submit a pull request
+
+## Acknowledgments
+
+- Based on the original work by [Aman Pathak](https://github.com/ashedrack)
+- Inspired by best practices from financial institutions
+- Uses open-source tools: OPA, OPAL, and Permit.io
+
+## License
+
+MIT
 
 ## 🤝 Contributing
 Contributions are welcome! Please open an issue or submit a pull request for any improvements or bug fixes.
