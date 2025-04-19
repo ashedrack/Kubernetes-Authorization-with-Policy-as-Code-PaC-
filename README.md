@@ -58,9 +58,36 @@ This project covers:
 - **Infrastructure as Code (IaC)**: Use Terraform to define and manage your EKS cluster.
 - **CI/CD Automation**: Leverage GitHub Actions to automate deployments.
 
-# EKS Terraform with Policy-as-Code (PaC)
+# Enhancing Kubernetes Authorization with Policy-as-Code (PaC)
 
-This project demonstrates how to implement a production-ready EKS cluster with advanced authorization using Policy-as-Code (PaC). It combines infrastructure automation via Terraform with modern authorization patterns using OPA, OPAL, and Permit.io.
+As we continue to evolve our EKS infrastructure automation, the next critical frontier is authorization modernization. Traditional Role-Based Access Control (RBAC) systems, while familiar, are increasingly inadequate in dynamic, multi-tenant, and compliance-heavy environments—especially in sectors like banking and fintech.
+
+Drawing insights from leading financial institutions and frameworks like OPA, Styra DAS, OPAL, and Permit.io, we've integrated Policy-as-Code (PaC) into our EKS architecture to support Attribute-Based Access Control (ABAC) and Relationship-Based Access Control (ReBAC) at scale.
+
+## Why Policy-as-Code?
+
+In a Kubernetes-native architecture, externalizing authorization logic from application code to version-controlled, declarative policies enhances:
+
+- **Security**: Enforces least-privilege access with real-time decisions
+- **Auditability**: Tracks every policy change and access decision
+- **Scalability**: Handles 50,000+ TPS with <5ms latency
+- **Compliance**: Meets strict mandates like GDPR, PSD2, and SOX with dynamic revocation and audit readiness
+
+## Implementation Approach
+
+We've adopted a phased PaC implementation model, inspired by practices at leading financial institutions:
+
+### Phase 1: Internal Infrastructure
+- OPA + Rego policies enforce authorization in Terraform pipelines
+- Kubernetes ValidatingWebhookConfigurations validate infrastructure deployment
+
+### Phase 2: Platform APIs & CI/CD
+- OPA sidecars deployed next to critical services
+- OPAL + Kafka streams for dynamic policy updates
+
+### Phase 3: Customer-Facing Services
+- ReBAC via Permit.io for external apps
+- OPA + Redis caching for ultra-low latency decisions
 
 ## Architecture Overview
 
@@ -126,13 +153,31 @@ The project implements a multi-layered authorization strategy:
 └── docs/                      # Documentation
 ```
 
+## 🧰 Tooling Highlights
+
+| Tool | Role |
+|------|------|
+| OPA | Core policy engine with Rego DSL |
+| Styra DAS | Governance and policy lifecycle management |
+| OPAL | Real-time policy and data updates |
+| Permit.io | Developer-friendly ReBAC platform with SDKs |
+
 ## Prerequisites
 
+### Infrastructure Tools
 - AWS CLI configured with appropriate credentials
 - Terraform >= 1.0.0
 - kubectl >= 1.20
+
+### Policy Tools
 - OPA CLI
+- OPAL Server/Client
+- Permit.io account and API key
+
+### Development
 - Python >= 3.11 (for example app)
+- Redis >= 6.0 (for policy caching)
+- Kafka >= 2.8 (for policy updates)
 
 ## Quick Start
 
